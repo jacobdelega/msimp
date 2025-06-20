@@ -1,37 +1,19 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Target, CircleDollarSign, Clock, MessageSquare, FileText, BarChart3, Zap, ChevronRight, ArrowRight, Edit, DownloadCloud } from "lucide-react";
+import { Calendar, Target, CircleDollarSign, Clock, MessageSquare, BarChart3, Edit, DownloadCloud } from "lucide-react";
+import { formatDate, calculateDateDifference, getStatusStyle, calculateTimeProgress, calculatePercentage, formatCurrency } from "@/lib/utils";
 export default function ViewCampaign({ campaign }) {
-    campaign = {
-        targetAudience: { gender: [], interests: [] },
-        compensation: { performanceMetrics: [] },
-        requirements: {
-            description:
-                "- Do exactly what the desc says - Do exactly what the desc says - Do exactly what the desc says - Do exactly what the desc says - Do exactly what the desc says - Do exactly what the desc says- Do exactly what the desc says- Do exactly what the desc says - Do exactly what the desc says - Do exactly what the desc says",
-            hashtags: true,
-            disclosure: true,
-            tag_brand: true,
-            contentType: [],
-            contentApprovalRequired: [],
-            requiredElements: [],
-        },
-        contentType: { types: [] },
-        _id: "681aa0ace067500f862f5cca",
-        name: "MarketSimplified",
-        company: "66e380335500d7192aad5921",
-        objective: "product_launch",
-        startDate: "2025-05-07T00:00:00.000Z",
-        endDate: "2025-05-31T00:00:00.000Z",
-        budget: 4900,
-        invitedInfluencers: [],
-        acceptedInfluencers: [],
-        status: "active",
-        keyMessages: ["Test Message"],
-        createdAt: "2025-05-06T23:52:12.384Z",
-        updatedAt: "2025-05-06T23:52:12.384Z",
-        __v: 0,
-    };
+    if (!campaign) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <h2 className="text-xl font-semibold text-gray-700">Campaign not found</h2>
+                    <p className="text-gray-500 mt-2">The requested campaign could not be loaded.</p>
+                </div>
+            </div>
+        );
+    }
     // Animation variants
     const fadeIn = {
         hidden: { opacity: 0, y: 20 },
@@ -53,23 +35,10 @@ export default function ViewCampaign({ campaign }) {
         transition: { duration: 2, repeat: Infinity, ease: "easeInOut" },
     };
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const month = monthNames[date.getMonth()];
-        const day = date.getDate();
-        const year = date.getFullYear();
-
-        return `${month} ${day}, ${year}`;
-    };
-
-    // Calculate campaign duration in days
-    const campaignDuration = () => {
-        const start = new Date(campaign.startDate);
-        const end = new Date(campaign.endDate);
-        const diffTime = Math.abs(end - start);
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    };
+    const progress = calculateTimeProgress(campaign.startDate, campaign.endDate);
+    const duration = calculateDateDifference(campaign.startDate, campaign.endDate);
+    const totalInfluencers = (campaign.invitedInfluencers?.length || 0) + (campaign.acceptedInfluencers?.length || 0);
+    const influencerProgressValue = calculatePercentage(campaign.acceptedInfluencers?.length || 0, totalInfluencers);
 
     const staggerContainer = {
         hidden: { opacity: 0 },
@@ -81,43 +50,6 @@ export default function ViewCampaign({ campaign }) {
         },
     };
 
-    const getStatusBg = (status) => {
-        switch (status) {
-            case "active":
-                return "bg-green-50 text-green-700";
-            case "pending":
-                return "bg-yellow-50 text-yellow-700";
-            case "completed":
-                return "bg-blue-50 text-blue-700";
-            default:
-                return "bg-gray-50 text-gray-700";
-        }
-    };
-
-    const campaignProgress = () => {
-        const today = new Date();
-        const start = new Date(campaign.startDate);
-        const end = new Date(campaign.endDate);
-
-        if (today < start) return 0;
-        if (today > end) return 100;
-
-        const total = end - start;
-        const current = today - start;
-        return Math.round((current / total) * 100);
-    };
-
-    const getObjectiveLabel = (objective) => {
-        const objectives = {
-            product_launch: "Product Launch",
-            brand_awareness: "Brand Awareness",
-            lead_generation: "Lead Generation",
-            sales: "Sales",
-            event_promotion: "Event Promotion",
-        };
-
-        return objectives[objective] || objective;
-    };
     return (
         <div className='min-h-screen'>
             <div className='max-w-7xl mx-auto'>
@@ -132,7 +64,7 @@ export default function ViewCampaign({ campaign }) {
                         <div>
                             <div className='flex items-center'>
                                 <h1 className='text-3xl font-bold text-gray-900'>{campaign.name}</h1>
-                                <div className={`ml-4 px-4 py-1 rounded-full text-sm font-semibold shadow-sm ${getStatusBg(campaign.status)}`}>{campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}</div>
+                                <div className={`ml-4 px-4 py-1 rounded-full text-sm font-semibold shadow-sm ${getStatusStyle(campaign.status)}`}>{campaign.status?.charAt(0).toUpperCase() + campaign.status?.slice(1)}</div>
                             </div>
                             <div className='flex items-center mt-2 text-gray-500'>
                                 <Calendar className='h-4 w-4 mr-1' />
@@ -175,7 +107,7 @@ export default function ViewCampaign({ campaign }) {
                                 </div>
                                 <div className='text-xs font-medium px-2 py-1 bg-blue-50 text-blue-600 rounded-md'>Campaign Goal</div>
                             </div>
-                            <h3 className='text-2xl font-bold text-gray-900'>{getObjectiveLabel(campaign.objective)}</h3>
+                            <h3 className='text-2xl font-bold text-gray-900'>{campaign.objective?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h3>
                             <p className='text-sm text-gray-500 mt-1'>Driving new product awareness</p>
                         </motion.div>
 
@@ -189,7 +121,7 @@ export default function ViewCampaign({ campaign }) {
                                 </div>
                                 <div className='text-xs font-medium px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md'>Budget</div>
                             </div>
-                            <h3 className='text-2xl font-bold text-gray-900'>${campaign.budget.toLocaleString()}</h3>
+                            <h3 className='text-2xl font-bold text-gray-900'>${formatCurrency(campaign.budget)}</h3>
                             <p className='text-sm text-gray-500 mt-1'>Total campaign budget</p>
                         </motion.div>
 
@@ -203,7 +135,7 @@ export default function ViewCampaign({ campaign }) {
                                 </div>
                                 <div className='text-xs font-medium px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md'>Duration</div>
                             </div>
-                            <h3 className='text-2xl font-bold text-gray-900'>{campaignDuration()} Days</h3>
+                            <h3 className='text-2xl font-bold text-gray-900'>{duration} Days</h3>
                             <p className='text-sm text-gray-500 mt-1'>
                                 {formatDate(campaign.startDate).split(",")[0]} - {formatDate(campaign.endDate).split(",")[0]}
                             </p>
@@ -229,13 +161,13 @@ export default function ViewCampaign({ campaign }) {
                                 <div className='relative'>
                                     <div className='flex justify-between items-center mb-4'>
                                         <h3 className='font-semibold text-lg text-gray-900'>Campaign Progress</h3>
-                                        <div className='bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm'>{campaignProgress()}% Complete</div>
+                                        <div className='bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm'>{progress}% Complete</div>
                                     </div>
 
                                     <div className='h-3 w-full bg-gray-100 rounded-full overflow-hidden mb-4 shadow-inner'>
                                         <motion.div
                                             initial={{ width: 0 }}
-                                            animate={{ width: `${campaignProgress()}%` }}
+                                            animate={{ width: `${progress}%` }}
                                             transition={{ duration: 1, ease: "easeOut" }}
                                             className='h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full'></motion.div>
                                     </div>
@@ -266,26 +198,26 @@ export default function ViewCampaign({ campaign }) {
                                 <div className='space-y-5'>
                                     <div>
                                         <h4 className='text-sm font-medium text-gray-500 mb-2'>Description</h4>
-                                        <div className='bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-700'>{campaign.requirements.description}</div>
+                                        <div className='bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-700'>{campaign.requirements?.description || 'No description provided'}</div>
                                     </div>
 
                                     <div className='space-y-2'>
                                         <h4 className='text-sm font-medium text-gray-500 mb-2'>Content Requirements</h4>
-                                        <div className={`flex items-center p-3 rounded-lg ${campaign.requirements.hashtags ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-100" : "bg-gray-50 text-gray-500"}`}>
+                                        <div className={`flex items-center p-3 rounded-lg ${campaign.requirements?.hashtags ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-100" : "bg-gray-50 text-gray-500"}`}>
                                             <div className='h-4 w-4 rounded-full bg-green-100 flex items-center justify-center mr-2'>
-                                                <div className={`h-2 w-2 rounded-full ${campaign.requirements.hashtags ? "bg-green-500" : "bg-gray-300"}`}></div>
+                                                <div className={`h-2 w-2 rounded-full ${campaign.requirements?.hashtags ? "bg-green-500" : "bg-gray-300"}`}></div>
                                             </div>
                                             <span className='text-sm font-medium'>Include Hashtags</span>
                                         </div>
-                                        <div className={`flex items-center p-3 rounded-lg ${campaign.requirements.disclosure ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-100" : "bg-gray-50 text-gray-500"}`}>
+                                        <div className={`flex items-center p-3 rounded-lg ${campaign.requirements?.disclosure ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-100" : "bg-gray-50 text-gray-500"}`}>
                                             <div className='h-4 w-4 rounded-full bg-green-100 flex items-center justify-center mr-2'>
-                                                <div className={`h-2 w-2 rounded-full ${campaign.requirements.disclosure ? "bg-green-500" : "bg-gray-300"}`}></div>
+                                                <div className={`h-2 w-2 rounded-full ${campaign.requirements?.disclosure ? "bg-green-500" : "bg-gray-300"}`}></div>
                                             </div>
                                             <span className='text-sm font-medium'>Disclose Partnership</span>
                                         </div>
-                                        <div className={`flex items-center p-3 rounded-lg ${campaign.requirements.tag_brand ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-100" : "bg-gray-50 text-gray-500"}`}>
+                                        <div className={`flex items-center p-3 rounded-lg ${campaign.requirements?.tag_brand ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-100" : "bg-gray-50 text-gray-500"}`}>
                                             <div className='h-4 w-4 rounded-full bg-green-100 flex items-center justify-center mr-2'>
-                                                <div className={`h-2 w-2 rounded-full ${campaign.requirements.tag_brand ? "bg-green-500" : "bg-gray-300"}`}></div>
+                                                <div className={`h-2 w-2 rounded-full ${campaign.requirements?.tag_brand ? "bg-green-500" : "bg-gray-300"}`}></div>
                                             </div>
                                             <span className='text-sm font-medium'>Tag Brand</span>
                                         </div>
@@ -303,9 +235,9 @@ export default function ViewCampaign({ campaign }) {
                                 </h3>
 
                                 <div>
-                                    {campaign.keyMessages.length > 0 ? (
+                                    {campaign.keyMessages?.length > 0 ? (
                                         <div className='space-y-3'>
-                                            {campaign.keyMessages.map((message, index) => (
+                                            {campaign.keyMessages?.map((message, index) => (
                                                 <motion.div
                                                     key={index}
                                                     initial={{ x: -10, opacity: 0 }}
@@ -351,15 +283,15 @@ export default function ViewCampaign({ campaign }) {
                                         <div className='flex justify-between items-center mb-2'>
                                             <span className='text-gray-600 font-medium'>Influencers</span>
                                             <div className='flex items-center text-sm'>
-                                                <span className='font-bold text-gray-900'>{campaign.acceptedInfluencers.length}</span>
+                                                <span className='font-bold text-gray-900'>{campaign.acceptedInfluencers?.length || 0}</span>
                                                 <span className='text-gray-400 mx-1'>/</span>
-                                                <span className='text-gray-500'>{campaign.invitedInfluencers.length + campaign.acceptedInfluencers.length || 0}</span>
+                                                <span className='text-gray-500'>{totalInfluencers}</span>
                                             </div>
                                         </div>
                                         <div className='h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner'>
                                             <motion.div
                                                 initial={{ width: 0 }}
-                                                animate={{ width: `${(campaign.acceptedInfluencers.length / (campaign.invitedInfluencers.length + campaign.acceptedInfluencers.length || 1)) * 100}%` }}
+                                                animate={{ width: `${influencerProgressValue}%` }}
                                                 transition={{ duration: 1, ease: "easeOut" }}
                                                 className='h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full'></motion.div>
                                         </div>
@@ -371,7 +303,7 @@ export default function ViewCampaign({ campaign }) {
                                             <div className='flex items-center text-sm'>
                                                 <span className='font-bold text-gray-900'>$0</span>
                                                 <span className='text-gray-400 mx-1'>/</span>
-                                                <span className='text-gray-500'>${campaign.budget.toLocaleString()}</span>
+                                                <span className='text-gray-500'>${formatCurrency(campaign.budget)}</span>
                                             </div>
                                         </div>
                                         <div className='h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner'>
@@ -399,7 +331,7 @@ export default function ViewCampaign({ campaign }) {
                                                 </div>
                                                 <div>
                                                     <p className='text-sm text-blue-600 font-medium'>Campaign Objective</p>
-                                                    <p className='font-bold text-gray-900'>{getObjectiveLabel(campaign.objective)}</p>
+                                                    <p className='font-bold text-gray-900'>{campaign.objective?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -425,7 +357,7 @@ export default function ViewCampaign({ campaign }) {
                                                 </div>
                                                 <div>
                                                     <p className='text-sm text-indigo-600 font-medium'>Campaign Duration</p>
-                                                    <p className='font-bold text-gray-900'>{campaignDuration()} Days</p>
+                                                    <p className='font-bold text-gray-900'>{duration} Days</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -437,7 +369,7 @@ export default function ViewCampaign({ campaign }) {
                                                 </div>
                                                 <div>
                                                     <p className='text-sm text-blue-600 font-medium'>Key Messages</p>
-                                                    <p className='font-bold text-gray-900'>{campaign.keyMessages.length} Message</p>
+                                                    <p className='font-bold text-gray-900'>{campaign.keyMessages?.length || 0} Messages</p>
                                                 </div>
                                             </div>
                                         </div>
