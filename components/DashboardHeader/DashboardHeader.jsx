@@ -126,7 +126,6 @@ const DashboardHeader = async ({ path }) => {
                     </Link>
                     <DropdownMenuItem>Support</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    {/* Make Server-Side Logout */}
                     <DropdownMenuItem>
                         <LogoutButton session={user_data} />
                     </DropdownMenuItem>

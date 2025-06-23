@@ -15,7 +15,7 @@ export async function createUser(userData) {
             throw new Error("User already exists");
         }
     } catch (error) {
-        throw new Error(error);
+        throw new Error(`User creation failed: ${error.message}`);
     }
 }
 
@@ -24,12 +24,17 @@ export async function getUserFromDb(email, hashedPassword) {
         throw new Error("Email and password are required");
     }
 
-    const user = User.findOne({
-        email,
-        password: hashedPassword,
-    });
+    try {
+        await connectDB();
+        const user = await User.findOne({
+            email,
+            password: hashedPassword,
+        });
 
-    return user;
+        return user;
+    } catch (error) {
+        throw new Error("Database error occurred");
+    }
 }
 
 export async function getUserFromEmail(email) {
@@ -37,12 +42,16 @@ export async function getUserFromEmail(email) {
         throw new Error("Email is required");
     }
 
-    await connectDB();
-    const foundUser = await User.findOne({
-        email,
-    });
+    try {
+        await connectDB();
+        const foundUser = await User.findOne({
+            email,
+        });
 
-    return foundUser;
+        return foundUser;
+    } catch (error) {
+        throw new Error("Database error occurred");
+    }
 }
 
 // This fucntion is called only to finish onboarding
@@ -80,7 +89,6 @@ export async function updateProfile(userData) {
 
     if (!updatedUser) {
         throw new Error("User not found");
-        return { error: "User was no updated" };
     }
 
     return { success: "User updated successfully" };
@@ -101,7 +109,6 @@ export async function updateInfluencer(user_id, userData) {
     if (!user_id || !userData) {
         throw new Error("User ID and data are required");
     }
-    console.log(userData);
 
     const formatedData = {
         name: userData.name,

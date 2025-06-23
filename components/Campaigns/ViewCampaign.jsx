@@ -51,11 +51,10 @@ export default function ViewCampaign({ campaign }) {
     };
 
     return (
-        <div className='min-h-screen'>
-            <div className='max-w-7xl mx-auto'>
-                {/* Top Header */}
-                <div className='absolute inset-0 bg-blue-50 opacity-5'></div>
-                <div className='relative px-6 py-8'>
+        <div className='min-h-screen bg-gray-50'>
+            <div className='max-w-7xl mx-auto p-6 space-y-6'>
+                {/* Header Section */}
+                <div className='bg-white rounded-2xl shadow-lg border border-gray-100 p-8'>
                     <motion.div
                         initial='hidden'
                         animate='visible'
@@ -91,16 +90,17 @@ export default function ViewCampaign({ campaign }) {
                 </div>
 
                 {/* Campaign Stats Cards */}
-                <div className='px-6 mt-6'>
+                <div className='bg-white rounded-2xl shadow-lg border border-gray-100 p-8'>
                     <motion.div
                         initial='hidden'
                         animate='visible'
                         variants={staggerContainer}
                         className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                        {/* Campaign Goal Card */}
                         <motion.div
                             variants={fadeInLeft}
                             whileHover={pulse}
-                            className='bg-white p-6 rounded-2xl shadow-lg border border-blue-100'>
+                            className='bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100'>
                             <div className='flex justify-between items-center mb-4'>
                                 <div className='bg-blue-100 p-2 rounded-lg'>
                                     <Target className='h-6 w-6 text-blue-600' />
@@ -111,29 +111,31 @@ export default function ViewCampaign({ campaign }) {
                             <p className='text-sm text-gray-500 mt-1'>Driving new product awareness</p>
                         </motion.div>
 
+                        {/* Budget Card */}
                         <motion.div
                             variants={fadeIn}
                             whileHover={pulse}
-                            className='bg-white p-6 rounded-2xl shadow-lg border border-blue-100'>
+                            className='bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl border border-emerald-100'>
                             <div className='flex justify-between items-center mb-4'>
                                 <div className='bg-emerald-100 p-2 rounded-lg'>
                                     <CircleDollarSign className='h-6 w-6 text-emerald-600' />
                                 </div>
                                 <div className='text-xs font-medium px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md'>Budget</div>
                             </div>
-                            <h3 className='text-2xl font-bold text-gray-900'>${formatCurrency(campaign.budget)}</h3>
+                            <h3 className='text-2xl font-bold text-gray-900'>{formatCurrency(campaign.budget)}</h3>
                             <p className='text-sm text-gray-500 mt-1'>Total campaign budget</p>
                         </motion.div>
 
+                        {/* Duration Card */}
                         <motion.div
                             variants={fadeInRight}
                             whileHover={pulse}
-                            className='bg-white p-6 rounded-2xl shadow-lg border border-blue-100'>
+                            className='bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-100'>
                             <div className='flex justify-between items-center mb-4'>
-                                <div className='bg-indigo-100 p-2 rounded-lg'>
-                                    <Clock className='h-6 w-6 text-indigo-600' />
+                                <div className='bg-purple-100 p-2 rounded-lg'>
+                                    <Clock className='h-6 w-6 text-purple-600' />
                                 </div>
-                                <div className='text-xs font-medium px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md'>Duration</div>
+                                <div className='text-xs font-medium px-2 py-1 bg-purple-50 text-purple-600 rounded-md'>Duration</div>
                             </div>
                             <h3 className='text-2xl font-bold text-gray-900'>{duration} Days</h3>
                             <p className='text-sm text-gray-500 mt-1'>
@@ -143,47 +145,47 @@ export default function ViewCampaign({ campaign }) {
                     </motion.div>
                 </div>
 
-                <div className='mx-auto px-6 py-6'>
-                    {/* Main Content */}
-                    <div className='grid grid-cols-1 md:grid-cols-12 gap-6'>
-                        {/* Left Column - Main Details */}
+                {/* Main Content */}
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+                    {/* Left Column - Main Details */}
+                    <div className='lg:col-span-2 space-y-6'>
                         <motion.div
                             initial='hidden'
                             animate='visible'
                             variants={staggerContainer}
-                            className='md:col-span-8 space-y-6'>
+                            className='space-y-6'>
+                            
                             {/* Campaign Progress */}
                             <motion.div
                                 variants={fadeIn}
-                                className='bg-white p-6 rounded-2xl shadow-lg border border-blue-100 overflow-hidden relative'>
-                                <div className='absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-blue-50 via-transparent to-transparent opacity-50'></div>
-
-                                <div className='relative'>
-                                    <div className='flex justify-between items-center mb-4'>
-                                        <h3 className='font-semibold text-lg text-gray-900'>Campaign Progress</h3>
-                                        <div className='bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm'>{progress}% Complete</div>
+                                className='bg-white p-6 rounded-2xl shadow-lg border border-blue-100'>
+                                <div className='flex justify-between items-center mb-6'>
+                                    <h3 className='font-semibold text-lg text-gray-900'>Campaign Progress</h3>
+                                    <div className='bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm'>
+                                        {progress}% Complete
                                     </div>
+                                </div>
 
-                                    <div className='h-3 w-full bg-gray-100 rounded-full overflow-hidden mb-4 shadow-inner'>
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${progress}%` }}
-                                            transition={{ duration: 1, ease: "easeOut" }}
-                                            className='h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full'></motion.div>
-                                    </div>
+                                <div className='h-3 w-full bg-gray-100 rounded-full overflow-hidden mb-4 shadow-inner'>
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 1, ease: "easeOut" }}
+                                        className='h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full'>
+                                    </motion.div>
+                                </div>
 
-                                    <div className='flex justify-between text-sm text-gray-600'>
-                                        <div className='flex items-center'>
-                                            <div className='h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mr-2'>
-                                                <div className='h-2 w-2 rounded-full bg-green-500'></div>
-                                            </div>
-                                            <span>{formatDate(campaign.startDate)}</span>
+                                <div className='flex justify-between text-sm text-gray-600'>
+                                    <div className='flex items-center'>
+                                        <div className='h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mr-2'>
+                                            <div className='h-2 w-2 rounded-full bg-green-500'></div>
                                         </div>
-                                        <div className='flex items-center'>
-                                            <span>{formatDate(campaign.endDate)}</span>
-                                            <div className='h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center ml-2'>
-                                                <div className='h-2 w-2 rounded-full bg-blue-500'></div>
-                                            </div>
+                                        <span>{formatDate(campaign.startDate)}</span>
+                                    </div>
+                                    <div className='flex items-center'>
+                                        <span>{formatDate(campaign.endDate)}</span>
+                                        <div className='h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center ml-2'>
+                                            <div className='h-2 w-2 rounded-full bg-blue-500'></div>
                                         </div>
                                     </div>
                                 </div>
@@ -262,13 +264,15 @@ export default function ViewCampaign({ campaign }) {
                                 </div>
                             </motion.div>
                         </motion.div>
+                    </div>
 
-                        {/* Right Column - Stats */}
+                    {/* Right Column - Stats */}
+                    <div className='lg:col-span-1 space-y-6'>
                         <motion.div
                             initial='hidden'
                             animate='visible'
                             variants={staggerContainer}
-                            className='md:col-span-4 space-y-6'>
+                            className='space-y-6'>
                             {/* Campaign Stats Card */}
                             <motion.div
                                 variants={fadeIn}
@@ -303,7 +307,7 @@ export default function ViewCampaign({ campaign }) {
                                             <div className='flex items-center text-sm'>
                                                 <span className='font-bold text-gray-900'>$0</span>
                                                 <span className='text-gray-400 mx-1'>/</span>
-                                                <span className='text-gray-500'>${formatCurrency(campaign.budget)}</span>
+                                                <span className='text-gray-500'>{formatCurrency(campaign.budget)}</span>
                                             </div>
                                         </div>
                                         <div className='h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner'>
@@ -315,64 +319,51 @@ export default function ViewCampaign({ campaign }) {
                                     </div>
                                 </div>
                             </motion.div>
-
-                            {/* Campaign Overview */}
+                            {/* Campaign Quick Stats */}
                             <motion.div
                                 variants={fadeIn}
                                 className='bg-white p-6 rounded-2xl shadow-lg border border-blue-100'>
-                                <h3 className='font-semibold text-lg text-gray-900 mb-6'>Campaign Details</h3>
-
-                                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                                    <div className='space-y-6'>
-                                        <div className='bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl border border-blue-100'>
-                                            <div className='flex items-center'>
-                                                <div className='h-12 w-12 rounded-lg bg-white flex items-center justify-center mr-4 shadow-sm'>
-                                                    <Target className='h-6 w-6 text-blue-600' />
-                                                </div>
-                                                <div>
-                                                    <p className='text-sm text-blue-600 font-medium'>Campaign Objective</p>
-                                                    <p className='font-bold text-gray-900'>{campaign.objective?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-                                                </div>
+                                <h3 className='font-semibold text-lg text-gray-900 mb-6'>Quick Details</h3>
+                                
+                                <div className='space-y-4'>
+                                    <div className='flex items-center justify-between py-3 border-b border-gray-100'>
+                                        <div className='flex items-center'>
+                                            <div className='h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3'>
+                                                <Target className='h-4 w-4 text-blue-600' />
                                             </div>
+                                            <span className='text-sm font-medium text-gray-600'>Objective</span>
                                         </div>
-
-                                        <div className='bg-gradient-to-br from-emerald-50 to-green-50 p-5 rounded-xl border border-emerald-100'>
-                                            <div className='flex items-center'>
-                                                <div className='h-12 w-12 rounded-lg bg-white flex items-center justify-center mr-4 shadow-sm'>
-                                                    <CircleDollarSign className='h-6 w-6 text-emerald-600' />
-                                                </div>
-                                                <div>
-                                                    <p className='text-sm text-emerald-600 font-medium'>Budget Allocation</p>
-                                                    <p className='font-bold text-gray-900'>${campaign.budget.toLocaleString()}</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <span className='text-sm font-semibold text-gray-900'>{campaign.objective?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
                                     </div>
-
-                                    <div className='space-y-6'>
-                                        <div className='bg-gradient-to-br from-indigo-50 to-purple-50 p-5 rounded-xl border border-indigo-100'>
-                                            <div className='flex items-center'>
-                                                <div className='h-12 w-12 rounded-lg bg-white flex items-center justify-center mr-4 shadow-sm'>
-                                                    <Clock className='h-6 w-6 text-indigo-600' />
-                                                </div>
-                                                <div>
-                                                    <p className='text-sm text-indigo-600 font-medium'>Campaign Duration</p>
-                                                    <p className='font-bold text-gray-900'>{duration} Days</p>
-                                                </div>
+                                    
+                                    <div className='flex items-center justify-between py-3 border-b border-gray-100'>
+                                        <div className='flex items-center'>
+                                            <div className='h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3'>
+                                                <CircleDollarSign className='h-4 w-4 text-emerald-600' />
                                             </div>
+                                            <span className='text-sm font-medium text-gray-600'>Budget</span>
                                         </div>
-
-                                        <div className='bg-gradient-to-br from-blue-50 to-sky-50 p-5 rounded-xl border border-blue-100'>
-                                            <div className='flex items-center'>
-                                                <div className='h-12 w-12 rounded-lg bg-white flex items-center justify-center mr-4 shadow-sm'>
-                                                    <MessageSquare className='h-6 w-6 text-blue-600' />
-                                                </div>
-                                                <div>
-                                                    <p className='text-sm text-blue-600 font-medium'>Key Messages</p>
-                                                    <p className='font-bold text-gray-900'>{campaign.keyMessages?.length || 0} Messages</p>
-                                                </div>
+                                        <span className='text-sm font-semibold text-gray-900'>{formatCurrency(campaign.budget)}</span>
+                                    </div>
+                                    
+                                    <div className='flex items-center justify-between py-3 border-b border-gray-100'>
+                                        <div className='flex items-center'>
+                                            <div className='h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center mr-3'>
+                                                <Clock className='h-4 w-4 text-purple-600' />
                                             </div>
+                                            <span className='text-sm font-medium text-gray-600'>Duration</span>
                                         </div>
+                                        <span className='text-sm font-semibold text-gray-900'>{duration} Days</span>
+                                    </div>
+                                    
+                                    <div className='flex items-center justify-between py-3'>
+                                        <div className='flex items-center'>
+                                            <div className='h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3'>
+                                                <MessageSquare className='h-4 w-4 text-blue-600' />
+                                            </div>
+                                            <span className='text-sm font-medium text-gray-600'>Messages</span>
+                                        </div>
+                                        <span className='text-sm font-semibold text-gray-900'>{campaign.keyMessages?.length || 0}</span>
                                     </div>
                                 </div>
                             </motion.div>
