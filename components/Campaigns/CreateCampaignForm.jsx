@@ -14,16 +14,27 @@ import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
 const CampaignForm = ({ existingCampaign = null }) => {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession()
+    
+    // Don't render form until session is loaded
+    if (status === "loading") {
+        return (
+            <div className="w-full max-w-4xl mx-auto py-8 px-4 flex justify-center items-center min-h-[400px]">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className="text-gray-500">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+    
     const userId = session?.user?.id;
-
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         name: "",
-        company: userId,
+        company: userId || "",
         objective: "",
         startDate: null,
         endDate: null,
@@ -45,14 +56,38 @@ const CampaignForm = ({ existingCampaign = null }) => {
     const [message, setMessage] = useState(""); // State for adding singleton key message
     const [isUploading, setIsUploading] = useState(false); // State for uploading document
 
-    // Only preload form data if in edit mode
+    // Update form data when userId becomes available or in edit mode
     useEffect(() => {
         if (existingCampaign) {
+            // Format dates for form inputs
+            const formatDateForInput = (dateString) => {
+                if (!dateString) return null;
+                return new Date(dateString).toISOString().split('T')[0];
+            };
+
             setFormData({
                 ...existingCampaign,
+                startDate: formatDateForInput(existingCampaign.startDate),
+                endDate: formatDateForInput(existingCampaign.endDate),
+                company: existingCampaign.company || userId || "",
+                contentTypes: existingCampaign.contentTypes || [],
+                targetNiches: existingCampaign.targetNiches || [],
+                keyMessages: existingCampaign.keyMessages || [],
+                requirements: {
+                    description: existingCampaign.requirements?.description || "",
+                    hashtags: existingCampaign.requirements?.hashtags || false,
+                    disclosure: existingCampaign.requirements?.disclosure || true,
+                    tag_brand: existingCampaign.requirements?.tag_brand || true,
+                },
+                guidelineFileName: existingCampaign.guidelineFileName || "",
             });
+        } else if (userId && formData.company !== userId) {
+            setFormData(prev => ({
+                ...prev,
+                company: userId
+            }));
         }
-    }, [existingCampaign]);
+    }, [existingCampaign, userId]);
 
     // Content options
     const contentTypeOptions = ["Instagram Post", "Instagram Story", "Instagram Reel", "TikTok", "YouTube", "Blog Post"];
@@ -129,7 +164,7 @@ const CampaignForm = ({ existingCampaign = null }) => {
         e.preventDefault();
 
         try {
-            const url = isEditMode ? `/api/campaigns/${formData._id}/update` : "/api/campaigns/create";
+            const url = isEditMode ? `/api/campaigns/${existingCampaign._id}/update` : "/api/campaigns/create";
             const method = isEditMode ? "PUT" : "POST";
             const status = action === "submit" ? "active" : "draft";
             const response = await fetch(url, {
@@ -137,18 +172,23 @@ const CampaignForm = ({ existingCampaign = null }) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...formData, status, company: session.user.id }),
+                body: JSON.stringify({ ...formData, status, company: userId }),
             });
 
             if (response.ok && response.status === 200) {
-                toast.success(`Campaign ${action === "submit" ? "created" : "saved as draft"} successfully`);
+                const actionText = isEditMode 
+                    ? `updated ${action === "submit" ? "" : "as draft"}`
+                    : `${action === "submit" ? "created" : "saved as draft"}`;
+                toast.success(`Campaign ${actionText} successfully`);
                 router.push("/campaigns");
             } else {
-                toast.error(`Campaign failed to ${action === "submit" ? "create" : "save as draft"}`);
+                const actionText = isEditMode ? "update" : (action === "submit" ? "create" : "save as draft");
+                toast.error(`Campaign failed to ${actionText}`);
             }
         } catch (error) {
-            console.error(`Error ${action === "submit" ? "creating" : "saving draft"} campaign:`, error);
-            toast.error(`An error occurred while ${action === "submit" ? "creating" : "saving draft"} the campaign`);
+            const actionText = isEditMode ? "updating" : (action === "submit" ? "creating" : "saving draft");
+            console.error(`Error ${actionText} campaign:`, error);
+            toast.error(`An error occurred while ${actionText} the campaign`);
         }
     };
 
@@ -173,8 +213,12 @@ const CampaignForm = ({ existingCampaign = null }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className='mb-8 text-center'>
-                <h1 className='text-3xl font-bold mb-2'>Create New Campaign</h1>
-                <p className='text-gray-500'>Connect with influencers to promote your brand</p>
+                <h1 className='text-3xl font-bold mb-2'>
+                    {isEditMode ? 'Edit Campaign' : 'Create New Campaign'}
+                </h1>
+                <p className='text-gray-500'>
+                    {isEditMode ? 'Update your campaign details' : 'Connect with influencers to promote your brand'}
+                </p>
             </motion.div>
 
             <div className='mb-8'>
@@ -622,7 +666,7 @@ const CampaignForm = ({ existingCampaign = null }) => {
                         <div className='space-x-2'>
                             <Button
                                 variant='outline'
-                                onClick={() => handleSubmitAction(event, "draft")}>
+                                onClick={(e) => handleSubmitAction(e, "draft")}>
                                 Save as draft
                             </Button>
                             <Button
@@ -634,7 +678,7 @@ const CampaignForm = ({ existingCampaign = null }) => {
                     ) : (
                         <Button
                             type='button'
-                            onClick={() => handleSubmitAction(event, "submit")}
+                            onClick={(e) => handleSubmitAction(e, "submit")}
                             className='bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'>
                             {isEditMode ? "Update Campaign" : "Submit Campaign"}
                         </Button>
