@@ -25,9 +25,7 @@ export async function getCampaignById(uuid) {
     try {
         await connectDB();
         const campaign = await Campaign.findById(uuid);
-        return JSON.parse(JSON.stringify(campaign)); // Convert any reaming Mongoose objects to JS objects
-
-        return campaign;
+        return JSON.parse(JSON.stringify(campaign)); // Convert any remaining Mongoose objects to JS objects
     } catch (error) {
         throw new Error(error);
     }
