@@ -9,7 +9,6 @@ export default async function Campaigns() {
     const userData = await auth();
     if (!userData) {
         redirect("/login");
-        return;
     }
     const allCampaigns = await getCampaigns(userData.user.id);
 
