@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Megaphone, Home, Settings, Package2 } from "lucide-react";
+import { Megaphone, Home, Settings, Users } from "lucide-react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 const SideNav = () => {
     return (
@@ -29,6 +29,19 @@ const SideNav = () => {
                             </Link>
                         </TooltipTrigger>
                         <TooltipContent side='right'>Campaigns</TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Link
+                                href='/influencers'
+                                className='flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8'>
+                                <Users className='h-5 w-5' />
+                                <span className='sr-only'>Influencers</span>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side='right'>Influencers</TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
             </nav>

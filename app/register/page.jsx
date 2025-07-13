@@ -11,8 +11,8 @@ const Register = () => {
     // React-hook-form
     const { register, handleSubmit } = useForm();
 
+    // Handle form submission
     const onSubmit = async (data) => {
-        // Request details - Simple POST method
         const requestOptions = {
             method: "POST",
             headers: {
@@ -20,13 +20,10 @@ const Register = () => {
             },
             body: JSON.stringify(data),
         };
-        try {
-            //  Send request
-            const response = await fetch(["/api/register"], requestOptions);
 
-            //  Grab response from backend
+        try {
+            const response = await fetch("/api/register", requestOptions);
             const result = await response.json();
-            console.log("Register result:", result); // should have accountProvider and email
 
             // Check if user was created
             if (response.ok) {
@@ -53,7 +50,7 @@ const Register = () => {
                 <form
                     onSubmit={handleSubmit(onSubmit)}
                     className='flex flex-col gap-3'>
-                    <input
+                    <input 
                         type='text'
                         required
                         placeholder='username'
