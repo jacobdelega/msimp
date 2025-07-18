@@ -11,7 +11,7 @@ export async function getCampaigns(uuid) {
         await connectDB();
         const campaigns = await Campaign.find({ company: uuid });
 
-        return campaigns;
+        return campaigns.map(campaign => campaign.toPrivateJSON());
     } catch (error) {
         throw new Error(error);
     }
@@ -25,7 +25,8 @@ export async function getCampaignById(uuid) {
     try {
         await connectDB();
         const campaign = await Campaign.findById(uuid);
-        return JSON.parse(JSON.stringify(campaign)); // Convert any remaining Mongoose objects to JS objects
+        
+        return campaign ? campaign.toPrivateJSON() : null;
     } catch (error) {
         throw new Error(error);
     }

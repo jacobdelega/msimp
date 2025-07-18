@@ -99,10 +99,14 @@ export async function getUserFromID(userId) {
         throw new Error("User ID is not found");
     }
 
-    await connectDB();
-
-    const user = await User.findById(userId);
-    return user;
+    try {
+        await connectDB();
+        const user = await User.findById(userId);
+        
+        return user ? user.toPrivateJSON() : null;
+    } catch (error) {
+        throw new Error("Database error occurred");
+    }
 }
 
 export async function updateInfluencer(user_id, userData) {
@@ -163,7 +167,8 @@ export async function getActiveInfluencers() {
     try {
         await connectDB();
         const activeInfluencers = await User.find({ isProfileComplete: true, userType: "influencer" });
-        return activeInfluencers;
+        
+        return activeInfluencers.map(influencer => influencer.toPublicJSON());
     } catch (error) {
         throw new Error(error);
     }

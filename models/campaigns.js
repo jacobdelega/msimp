@@ -29,8 +29,27 @@ const campaignSchema = new mongoose.Schema(
   }
 );
 
+// Schema methods for different data contexts
+campaignSchema.methods.toPublicJSON = function() {
+    const obj = this.toObject();
+    delete obj.__v;
+
+    return JSON.parse(JSON.stringify(obj)); // Convert ObjectIds to strings
+};
+
+campaignSchema.methods.toPrivateJSON = function() {
+    const obj = this.toObject();
+    // Remove only version key for private/company view
+    delete obj.__v;
+    
+    return JSON.parse(JSON.stringify(obj)); // Convert ObjectIds to strings
+};
+
 campaignSchema.index({ company: 1 });
 campaignSchema.index({ status: 1 });
+campaignSchema.index({ targetNiches: 1 });
+campaignSchema.index({ startDate: 1 });
+campaignSchema.index({ endDate: 1 });
 
 const Campaign = mongoose.models.Campaign || mongoose.model("Campaign", campaignSchema);
 
