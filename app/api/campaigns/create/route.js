@@ -10,12 +10,13 @@ export async function POST(req) {
     try {
         await connectDB();
         const formData = await req.json();
-
-        // Create Campaign
         const newCampaign = await Campaign.create(formData);
-        return Response.json({ message: formData.status === "draft" ? "Campaign saved as draft" : "Campaign created successfully",
-            campaign: newCampaign 
-        }, { status: 200 }); } catch (error) {
+        const message = formData.status === "draft" 
+            ? "Campaign saved as draft" 
+            : "Campaign created successfully";
+
+        return Response.json({ message, campaign: newCampaign }, { status: 200 });
+    } catch (error) {
         return Response.json({ message: "Error creating campaign"}, { status: 500 });
     }
 }
