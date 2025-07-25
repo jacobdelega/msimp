@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Rocket, TrendingUp, Users } from "lucide-react";
 
-const EmptyCampaignsState = ({ userId }) => {
+const EmptyCampaignsState = () => {
     return (
         <div className='flex flex-col items-center justify-center py-16 px-4 text-center'>
             <div className='w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6'>
@@ -48,7 +48,7 @@ const EmptyCampaignsState = ({ userId }) => {
                 </div>
             </div>
 
-            <Link href={`/campaigns/create?userId=${userId}`}>
+            <Link href="/campaigns/create">
                 <Button
                     size='lg'
                     className='gap-2 py-6 px-8 text-lg'>

@@ -2,9 +2,16 @@ import SideNav from "@/components/SideNav/SideNav";
 import DashboardHeader from "@/components/DashboardHeader/DashboardHeader";
 import CreateCampaignForm from "@/components/Campaigns/CreateCampaignForm";
 import { getCampaignById } from "@/queries/Campaigns/campaign_queries";
-import { notFound } from "next/navigation";
+import { auth } from "@/auth";
+import { notFound, redirect } from "next/navigation";
 
 export default async function Create({ searchParams }) {
+    // Validate session first
+    const session = await auth();
+    if (!session?.user?.id) {
+        redirect("/login");
+    }
+
     const editId = searchParams?.edit;
     const isEditMode = !!editId;
     let existingCampaign = null;
@@ -32,7 +39,7 @@ export default async function Create({ searchParams }) {
             <div className='flex flex-col sm:gap-4 sm:py-4 sm:pl-14'>
                 <DashboardHeader path={headerPath} />
                 <main className='py-6'>
-                    <CreateCampaignForm existingCampaign={existingCampaign} />
+                    <CreateCampaignForm existingCampaign={existingCampaign} userId={session?.user?.id} />
                 </main>
             </div>
         </div>

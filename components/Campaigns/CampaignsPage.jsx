@@ -10,8 +10,7 @@ import StickyHeader from "@/components/Campaigns/StickyHeader";
 import EmptyCampaignsState from "./EmptyCampaignsState";
 import { calculateDateDifference } from "@/lib/utils";
 
-function CampaignsPage({ allCampaigns, userData }) {
-    const userId = userData.user.id;
+function CampaignsPage({ allCampaigns }) {
     const initialCampaigns = allCampaigns;
     const [isSelectMode, setIsSelectMode] = useState(false);
     const [selectedCampaigns, setSelectedCampaigns] = useState(new Set());
@@ -61,7 +60,7 @@ function CampaignsPage({ allCampaigns, userData }) {
     };
 
     if (!initialCampaigns.length > 0) {
-        return <EmptyCampaignsState userId={userId} />;
+        return <EmptyCampaignsState />;
     }
 
     return (

@@ -13,28 +13,12 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-const CampaignForm = ({ existingCampaign = null }) => {
-    const { data: session, status } = useSession()
-    
-    // Don't render form until session is loaded
-    if (status === "loading") {
-        return (
-            <div className="w-full max-w-4xl mx-auto py-8 px-4 flex justify-center items-center min-h-[400px]">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                    <p className="text-gray-500">Loading...</p>
-                </div>
-            </div>
-        );
-    }
-    
-    const userId = session?.user?.id;
+const CampaignForm = ({ existingCampaign = null, userId }) => {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         name: "",
-        company: userId || "",
+        company: userId,
         objective: "",
         startDate: null,
         endDate: null,
@@ -45,18 +29,16 @@ const CampaignForm = ({ existingCampaign = null }) => {
         requirements: {
             description: "",
             hashtags: false,
-            disclosure: true,
             tag_brand: true,
+            disclosure: true,
         },
         status: "draft",
         guidelineFileName: "",
     });
-
-    const isEditMode = !!existingCampaign;
     const [message, setMessage] = useState(""); // State for adding singleton key message
     const [isUploading, setIsUploading] = useState(false); // State for uploading document
+    const isEditMode = !!existingCampaign;
 
-    // Update form data when userId becomes available or in edit mode
     useEffect(() => {
         if (existingCampaign) {
             // Format dates for form inputs

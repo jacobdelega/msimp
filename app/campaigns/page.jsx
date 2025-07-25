@@ -20,7 +20,6 @@ export default async function Campaigns() {
                 <main className='p-6'>
                     <CampaignsPage
                         allCampaigns={allCampaigns}
-                        userData={userData}
                     />
                 </main>
             </div>
