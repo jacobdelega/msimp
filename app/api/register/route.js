@@ -6,7 +6,6 @@ export async function POST(req) {
         // Grab data from CLIENT
         const formData = await req.json(); // Grab the form data
         const { name, email, password } = formData;
-
         // Validate data
         if (!name || !email || !password) {
             return Response.json({ message: "All fields are required" }, { status: 400 });

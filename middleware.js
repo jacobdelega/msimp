@@ -16,7 +16,8 @@ export async function middleware(req) {
     
     // API routes that don't require authentication
     const publicApiRoutes = [
-        "/api/auth"
+        "/api/auth",
+        "/api/register"
     ];
     
     // Check if it's a public route

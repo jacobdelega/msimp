@@ -9,7 +9,6 @@ export default async function Campaigns() {
     const userData = await auth();
     if (!userData) {
         redirect("/login");
-        return;
     }
     const allCampaigns = await getCampaigns(userData.user.id);
 
@@ -21,7 +20,6 @@ export default async function Campaigns() {
                 <main className='p-6'>
                     <CampaignsPage
                         allCampaigns={allCampaigns}
-                        userData={userData}
                     />
                 </main>
             </div>

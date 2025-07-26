@@ -1,7 +1,13 @@
 import Link from "next/link";
-import { Megaphone, Home, Settings, Package2 } from "lucide-react";
+import { Megaphone, Home, Settings, Users } from "lucide-react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
-const SideNav = () => {
+import { auth } from "@/auth";
+import { getUserFromID } from "@/queries/User/user_queries";
+
+const SideNav = async () => {
+    const session = await auth();
+    const userData = await getUserFromID(session.user.id);
+
     return (
         <aside className='fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex'>
             <nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
@@ -31,6 +37,21 @@ const SideNav = () => {
                         <TooltipContent side='right'>Campaigns</TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+                {userData.userType === "company" && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Link
+                                    href='/influencers'
+                                    className='flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8'>
+                                    <Users className='h-5 w-5' />
+                                    <span className='sr-only'>Influencers</span>
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side='right'>Influencers</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
             </nav>
             <nav className='mt-auto flex flex-col items-center gap-4 px-2 sm:py-5'>
                 <TooltipProvider>
